@@ -39,9 +39,10 @@ public class ProductService {
 
     }
 
-    public Product update(Integer id, Product product) {
-        if (productRepository.findProductById(id) != null) {
-            return productRepository.save(product);
+    public Product update(Product product, Integer id) {
+        Product productToUpdate = productRepository.findProductById(id);
+        if (product != null) {
+            return productRepository.save(productToUpdate);
         } else return null;
     }
 }

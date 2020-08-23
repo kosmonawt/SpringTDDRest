@@ -2,28 +2,28 @@ package com.tdd.integration;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.tomakehurst.wiremock.WireMockServer;
 import com.tdd.model.Product;
 import com.tdd.repository.ProductRepository;
-import com.tdd.service.ProductService;
-import net.minidev.json.JSONUtil;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.json.GsonJsonParser;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.web.client.RestTemplate;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.Arrays;
 
+import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static org.hamcrest.Matchers.is;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 
@@ -87,5 +87,37 @@ public class ProductServiceIntegrationTest {
         mockMvc.perform(MockMvcRequestBuilders.delete("/product/{id}", 1))
                 .andExpect(status().isOk());
 
+    }
+
+    @Test
+    public void POSTtest() {
+        RestTemplate restTemplate = new RestTemplate();
+        WireMockServer wireMockServer = new WireMockServer(9090);
+        wireMockServer.start();
+        // configure response stub
+        wireMockServer.stubFor(get(urlEqualTo("/product"))
+                .willReturn(aResponse()
+                        .withHeader("Content-Type", "application/json")
+                        .withStatus(200)
+                        .withBody("{\n" +
+                                "  \"id\": 1,\n" +
+                                "  \"name\": \"First Product\",\n" +
+                                "  \"description\": \"First Product Description\",\n" +
+                                "  \"quantity\": 8,\n" +
+                                "  \"version\": 1\n" +
+                                "}")));
+        //        wireMockServer.stubFor(get(urlEqualTo("/product/2"))
+//                .willReturn(aResponse().withStatus(404)));
+//        wireMockServer.stubFor(post("/product")
+//                // Actual Header sent by the RestTemplate is: application/json;charset=UTF-8
+//                .withHeader("Content-Type", containing("application/json"))
+//                .withRequestBody(containing("\"id\":3"))
+//                .willReturn(aResponse()
+//                        .withHeader("Content-Type", "application/json")
+//                        .withStatus(200)
+//                        .withBodyFile("json/supply-response-after-post.json")));
+        Product product = restTemplate.getForObject("http://localhost:9090/product", Product.class);
+        Assertions.assertEquals(product.getId(), 1);
+        wireMockServer.stop();
     }
 }

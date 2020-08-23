@@ -39,8 +39,12 @@ public class ProductController {
     }
 
     @PutMapping("/{id}")
-    public Product updateProductById(@PathVariable Integer id, @RequestBody Product product) {
-        return productService.update(id, product);
+    public ResponseEntity<?> updateProductById(@PathVariable Integer id, @RequestBody Product product) {
+        Product productToSave = productService.update(product, id);
+        if (productToSave != null) {
+            return ResponseEntity.ok().body(productToSave);
+        } else return null;
     }
+
 
 }

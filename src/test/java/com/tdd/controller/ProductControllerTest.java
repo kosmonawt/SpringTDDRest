@@ -64,19 +64,21 @@ class ProductControllerTest {
     @Test
     @DisplayName("Test delete product by Id- DELETE /product/{id} ")
     void testDELETEProductById() throws Exception {
-
         Product mockProduct = new Product(1, "Nazwa", "Opis", 1, 1);
+        Product mockProduct2 = new Product(2, "Nazwa2", "Opis2", 3, 6);
 
-        mockMvc.perform(MockMvcRequestBuilders.delete("/product/{id}", mockProduct.getId())
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(new ObjectMapper().writeValueAsString(mockProduct.getId())))
+        doReturn(Arrays.asList(mockProduct, mockProduct2)).when(productService).findAll();
+
+
+        mockMvc.perform(MockMvcRequestBuilders.delete("/product/{id}", mockProduct.getId()))
+
                 .andExpect(status().isOk());
 
         Assertions.assertNull(productService.findById(mockProduct.getId()));
-        //  Assertions.assertNotNull((productService.findById(2)));
+        Assertions.assertNotNull((productService.findById(mockProduct2.getId())));
     }
 
-    @Test
+/*    @Test
     @DisplayName("Test products found - GET /product ")
     void testGETProductsFoundAll() throws Exception {
 
@@ -91,6 +93,27 @@ class ProductControllerTest {
                 .andExpect(jsonPath("$[0].id", is(1)))
                 .andExpect(jsonPath("$[1].id", is(2)));
 
+    }*/
+
+    @Test
+    @DisplayName("Test products update - PUT /product/{id} ")
+    void testUpdateProductById() throws Exception {
+
+        Product mockProduct = new Product(1, "Nazwa", "Opis", 1, 1);
+        Product updateProduct = new Product("Nazwa2", "Opis2", 32);
+
+        // doReturn(mockProduct).when(productService).findById(1);
+        doReturn(mockProduct).when(productService).update(updateProduct, 1);
+
+        mockMvc.perform(MockMvcRequestBuilders.put("/product/{id}", 1)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(new ObjectMapper().writeValueAsString(updateProduct)))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.id", is(1)));
+
+
     }
+
 
 }
