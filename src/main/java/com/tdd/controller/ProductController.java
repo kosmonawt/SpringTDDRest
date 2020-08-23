@@ -33,4 +33,9 @@ public class ProductController {
         return productService.save(product);
     }
 
+    @DeleteMapping("/{id}")
+    public void deleteProduct(@PathVariable Integer id) {
+        productService.deleteProductById(id);
+    }
+
 }

@@ -30,4 +30,13 @@ public class ProductService {
             return product;
         } else return null;
     }
+
+    public void deleteProductById(Integer id) {
+
+        if (productRepository.findProductById(id) != null){
+            productRepository.delete(productRepository.findProductById(id));
+
+        }
+
+    }
 }

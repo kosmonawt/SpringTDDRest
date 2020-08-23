@@ -65,7 +65,7 @@ public class ProductServiceIntegrationTest {
     @DisplayName("Test add product - POST /product/")
     public void testPOSTProductFound() throws Exception {
 
-        Product productToSave = new Product(21, "zazaz", "ololo", 12, 4);
+        Product productToSave = new Product(21, "azaza", "ololo", 12, 4);
         mockMvc.perform(MockMvcRequestBuilders.post("/product")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(new ObjectMapper().writeValueAsString(productToSave)))
@@ -75,8 +75,11 @@ public class ProductServiceIntegrationTest {
     }
 
     @Test
-    @DisplayName("Test add product - DELETE /product/")
-    public void testDelProduct() {
+    @DisplayName("Test delete product by ID - DELETE /product/")
+    void testDelProductByID() throws Exception {
+
+        mockMvc.perform(MockMvcRequestBuilders.delete("/product/{id}", 1).contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
 
     }
 
