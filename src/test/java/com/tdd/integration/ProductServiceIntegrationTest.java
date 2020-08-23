@@ -71,7 +71,7 @@ public class ProductServiceIntegrationTest {
     }
 
     @Test
-    @DisplayName("Test delete product by ID - DELETE /product/")
+    @DisplayName("Test delete product by ID - DELETE /product/{id}")
     void testDelProductByID() throws Exception {
 
         mockMvc.perform(MockMvcRequestBuilders.delete("/product/{id}", 1))
@@ -80,8 +80,12 @@ public class ProductServiceIntegrationTest {
 
     }
 
+    @Test
+    @DisplayName("Test update product - PUT method")
+    void testPutProduct() throws Exception {
 
+        mockMvc.perform(MockMvcRequestBuilders.delete("/product/{id}", 1))
+                .andExpect(status().isOk());
 
-
-
+    }
 }

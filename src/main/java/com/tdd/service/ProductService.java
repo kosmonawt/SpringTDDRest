@@ -26,17 +26,22 @@ public class ProductService {
     public Product save(Product product) {
         if (product != null) {
             productRepository.save(product);
-
             return product;
         } else return null;
     }
 
     public void deleteProductById(Integer id) {
 
-        if (productRepository.findProductById(id) != null){
+        if (productRepository.findProductById(id) != null) {
             productRepository.delete(productRepository.findProductById(id));
 
         }
 
+    }
+
+    public Product update(Integer id, Product product) {
+        if (productRepository.findProductById(id) != null) {
+            return productRepository.save(product);
+        } else return null;
     }
 }

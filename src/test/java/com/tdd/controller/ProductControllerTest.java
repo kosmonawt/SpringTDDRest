@@ -1,7 +1,10 @@
 package com.tdd.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tdd.model.Product;
 import com.tdd.service.ProductService;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -14,7 +17,9 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import java.lang.reflect.Array;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.Arrays;
 
 import static org.hamcrest.Matchers.is;
@@ -32,6 +37,14 @@ class ProductControllerTest {
     @Autowired
     MockMvc mockMvc;
 
+    @BeforeEach
+    void setUp() throws IOException {
+        File file = Paths.get("src", "test", "resources", "products.json").toFile();
+
+        Product[] products = new ObjectMapper().readValue(file, Product[].class);
+
+        Arrays.stream(products).forEach(productService::save);
+    }
 
     @Test
     @DisplayName("Test product found - GET /product/1 ")
@@ -46,6 +59,21 @@ class ProductControllerTest {
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.id", is(1)));
 
+    }
+
+    @Test
+    @DisplayName("Test delete product by Id- DELETE /product/{id} ")
+    void testDELETEProductById() throws Exception {
+
+        Product mockProduct = new Product(1, "Nazwa", "Opis", 1, 1);
+
+        mockMvc.perform(MockMvcRequestBuilders.delete("/product/{id}", mockProduct.getId())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(new ObjectMapper().writeValueAsString(mockProduct.getId())))
+                .andExpect(status().isOk());
+
+        Assertions.assertNull(productService.findById(mockProduct.getId()));
+        //  Assertions.assertNotNull((productService.findById(2)));
     }
 
     @Test
