@@ -4,10 +4,7 @@ import ch.qos.logback.classic.Logger;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tdd.model.Product;
 import jdk.jfr.Description;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -35,6 +32,11 @@ class ProductRepositoryTest {
 
         Arrays.stream(products).forEach(productRepository::save);
 
+    }
+
+    @AfterEach
+    public void clean() {
+        productRepository.deleteAll();
     }
 
 
