@@ -25,4 +25,9 @@ public class ProductController {
         return ResponseEntity.ok().body(productService.findById(id));
     }
 
+    @GetMapping()
+    public ResponseEntity<?> getProducts() {
+        return ResponseEntity.ok().body(productService.findAll());
+    }
+
 }

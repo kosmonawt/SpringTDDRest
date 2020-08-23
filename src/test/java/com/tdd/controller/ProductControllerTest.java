@@ -14,6 +14,9 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import java.lang.reflect.Array;
+import java.util.Arrays;
+
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.doReturn;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -42,6 +45,23 @@ class ProductControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.id", is(1)));
+
+    }
+
+    @Test
+    @DisplayName("Test products found - GET /product ")
+    void testGETProductsFoundAll() throws Exception {
+
+        Product mockProduct = new Product(1, "Nazwa", "Opis", 1, 1);
+        Product mockProduct2 = new Product(2, "Nazwa2", "Opis2", 3, 6);
+
+        doReturn(Arrays.asList(mockProduct, mockProduct2)).when(productService).findAll();
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/product", mockProduct.getId()))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$[0].id", is(1)))
+                .andExpect(jsonPath("$[1].id", is(2)));
 
     }
 
