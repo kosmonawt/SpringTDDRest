@@ -22,4 +22,12 @@ public class ProductService {
     public List<Product> findAll() {
         return (List<Product>) productRepository.findAll();
     }
+
+    public Product save(Product product) {
+        if (product != null) {
+            productRepository.save(product);
+
+            return product;
+        } else return null;
+    }
 }

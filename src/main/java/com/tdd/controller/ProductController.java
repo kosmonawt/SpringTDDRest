@@ -1,12 +1,10 @@
 package com.tdd.controller;
 
 
+import com.tdd.model.Product;
 import com.tdd.service.ProductService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/product")
@@ -28,6 +26,11 @@ public class ProductController {
     @GetMapping()
     public ResponseEntity<?> getProducts() {
         return ResponseEntity.ok().body(productService.findAll());
+    }
+
+    @PostMapping
+    public Product addProduct(@RequestBody Product product) {
+        return productService.save(product);
     }
 
 }
