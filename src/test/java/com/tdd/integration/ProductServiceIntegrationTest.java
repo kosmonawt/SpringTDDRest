@@ -6,10 +6,7 @@ import com.tdd.model.Product;
 import com.tdd.repository.ProductRepository;
 import com.tdd.service.ProductService;
 import net.minidev.json.JSONUtil;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.json.GsonJsonParser;
@@ -69,7 +66,6 @@ public class ProductServiceIntegrationTest {
         mockMvc.perform(MockMvcRequestBuilders.post("/product")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(new ObjectMapper().writeValueAsString(productToSave)))
-
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON));
     }
@@ -78,10 +74,14 @@ public class ProductServiceIntegrationTest {
     @DisplayName("Test delete product by ID - DELETE /product/")
     void testDelProductByID() throws Exception {
 
-        mockMvc.perform(MockMvcRequestBuilders.delete("/product/{id}", 1).contentType(MediaType.APPLICATION_JSON))
+        mockMvc.perform(MockMvcRequestBuilders.delete("/product/{id}", 1))
                 .andExpect(status().isOk());
+        Assertions.assertNull(productRepository.findProductById(1));
 
     }
+
+
+
 
 
 }
